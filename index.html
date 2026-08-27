@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ذكريات | أرشيف اللحظات الجميلة</title>
+  
+  <!-- Meta Tags -->
+  <meta name="description" content="موقع ذكريات - حفظ وتوثيق ألبومات الصور والمواقف والملاحظات الخاصة بمن تحب بكل دفء وأمان.">
+  <meta name="author" content="mahmoud emad">
+
+  <!-- Google Fonts: Amiri & Readex Pro & Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700&family=Readex+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Audio Player Widget -->
+  <div id="audioFloatingPlayer" class="audio-floating-player">
+    <button id="btnAudioToggle" class="audio-btn" onclick="toggleAudioPlay()" title="تشغيل / إيقاف الأغنية">
+      <i id="audioPlayIcon" class="fa-solid fa-music"></i>
+    </button>
+    <button id="btnAudioNext" class="audio-btn" style="width:32px; height:32px; min-height:32px; font-size:0.8rem;" onclick="playNextSong()" title="الأغنية التالية">
+      <i class="fa-solid fa-forward-step"></i>
+    </button>
+    <span id="audioTrackTitle" class="audio-track-info">موسيقى الذكريات</span>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-content">
+      <div class="brand" onclick="showAlbumsGrid()">
+        <div class="brand-icon">
+          <i class="fa-solid fa-book-bookmark"></i>
+        </div>
+        <div class="brand-text">
+          <h1>ذكريات</h1>
+          <span>أرشيف اللحظات والمواقف الجميلة</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Admin Mode Active Indicator -->
+        <div id="adminActiveBadge" class="admin-active-badge" style="display: none;">
+          <i class="fa-solid fa-shield-halved"></i> <span>وضع الأدمن</span>
+        </div>
+
+        <!-- Admin Login Trigger Button -->
+        <button class="btn-admin-icon" onclick="openAdminModal()" title="تسجيل دخول الأدمن">
+          <i class="fa-solid fa-key"></i>
+        </button>
+
+        <button class="btn btn-primary" onclick="openCreateAlbumModal()">
+          <i class="fa-solid fa-plus"></i>
+          <span>إنشاء ألبوم جديد</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    
+    <!-- Hero Section -->
+    <section class="hero" id="heroSection">
+      <h2 class="hero-title">احفظ ذكريات من تحب</h2>
+      <p class="hero-subtitle">كل صورة تحكي حكاية... استعد أجمل اللحظات والمواقف الخاصة بكل شخص في ألبوم دافئ وأنيق.</p>
+      
+      <div class="search-bar-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم الشخص أو اللقب..." oninput="filterAlbums()">
+      </div>
+    </section>
+
+    <!-- SECTION 1: ALBUMS LIST -->
+    <section id="albumsSection">
+      <div class="section-title">
+        <i class="fa-solid fa-photo-film"></i>
+        <span>ألبومات الذكريات</span>
+      </div>
+
+      <div id="albumsGrid" class="albums-grid">
+        <!-- Dynamic Albums -->
+      </div>
+    </section>
+
+    <!-- SECTION 2: SINGLE ALBUM DETAIL -->
+    <section id="albumViewSection" class="album-view">
+      <div class="album-header-card">
+        <div class="album-header-info">
+          <div id="albumHeaderAvatarContainer"></div>
+          <div class="album-header-text">
+            <h2 id="albumViewPersonName">--</h2>
+            <p id="albumViewTitle">--</p>
+            <div id="albumLockBadge" class="lock-badge locked">
+              <i class="fa-solid fa-lock"></i>
+              <span>وضع العرض فقط</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="album-header-btns">
+          <button class="btn btn-secondary" onclick="showAlbumsGrid()">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>العودة للألبومات</span>
+          </button>
+          
+          <button id="btnUnlockAlbum" class="btn btn-outline-gold" onclick="openPinModal()">
+            <i class="fa-solid fa-key"></i>
+            <span>تفعيل وضع التعديل</span>
+          </button>
+
+          <button id="btnAddPhoto" class="btn btn-primary" onclick="openAddPhotoModal()" style="display: none;">
+            <i class="fa-solid fa-camera-retro"></i>
+            <span>إضافة ذكرى جديدة</span>
+          </button>
+
+          <button id="btnDeleteAlbum" class="btn btn-danger" onclick="confirmDeleteAlbum()" style="display: none;">
+            <i class="fa-solid fa-trash-can"></i>
+            <span>حذف الألبوم</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <i class="fa-solid fa-heart"></i>
+        <span>لحظات وذكريات الألبوم</span>
+      </div>
+
+      <div id="photosGrid" class="photos-grid">
+        <!-- Dynamic Photos -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>موقع ذكريات &copy; 2026 — تم التصميم بواسطة <b>mahmoud emad</b> <i class="fa-solid fa-heart"></i></p>
+    </div>
+  </footer>
+
+  <!-- MODALS -->
+
+  <!-- 1. Create Album Modal -->
+  <div id="createAlbumModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-folder-plus"></i> إنشاء ألبوم جديد</h3>
+        <button class="modal-close" onclick="closeModal('createAlbumModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="createAlbumForm" onsubmit="handleCreateAlbum(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>اسم الشخص <span class="req">*</span></label>
+            <input type="text" id="albumPersonName" class="form-control" placeholder="مثال: الجد أبو فهد / سارة" required>
+          </div>
+
+          <div class="form-group">
+            <label>اللقب أو الصفة الخاصة <span class="req">*</span></label>
+            <input type="text" id="albumTitle" class="form-control" placeholder="مثال: منبع الحنان / صديق العمر" required>
+          </div>
+
+          <div class="form-group">
+            <label>الرقم السري (PIN) الخاص بك <span class="req">*</span></label>
+            <input type="password" id="albumPin" class="form-control" placeholder="أدخل 4 أرقام على الأقل" required minlength="4">
+            <div class="form-hint"><i class="fa-solid fa-shield-halved"></i> يُستخدم هذا الرقم لاحقاً فقط لتعديل الألبوم أو إضافة صور جديدة.</div>
+          </div>
+
+          <div class="form-group">
+            <label>صورة الغلاف (اختياري)</label>
+            <div class="file-dropzone" onclick="document.getElementById('albumCoverFile').click()">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <p>اضغط لاختيار صورة الغلاف</p>
+              <input type="file" id="albumCoverFile" accept="image/*" style="display: none;" onchange="handleSingleFileSelect(this, 'albumCoverPreview')">
+              <img id="albumCoverPreview" class="file-preview" alt="معاينة الغلاف">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('createAlbumModal')">إلغاء</button>
+          <button type="submit" id="btnSubmitAlbum" class="btn btn-primary">حفظ الألبوم</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Add Multi-Photo Memory Modal -->
+  <div id="addPhotoModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-camera"></i> إضافة ذكرى جديدة (صور متعددة)</h3>
+        <button class="modal-close" onclick="closeModal('addPhotoModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="addPhotoForm" onsubmit="handleAddPhoto(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>اختر صورة واحدة أو عدة صور للذكرى <span class="req">*</span></label>
+            <div class="file-dropzone" onclick="document.getElementById('photoFilesInput').click()">
+              <i class="fa-solid fa-images"></i>
+              <p>اضغط لاختيار صور متعددة دفعة واحدة</p>
+              <input type="file" id="photoFilesInput" accept="image/*" multiple style="display: none;" onchange="handleMultipleFilesSelect(this)">
+            </div>
+            
+            <!-- Thumbnail Grid Preview -->
+            <div id="thumbPreviewGrid" class="thumbnail-preview-grid"></div>
+          </div>
+
+          <div class="form-group">
+            <label>الموقف أو المناسبة <span class="req">*</span></label>
+            <input type="text" id="photoOccasion" class="form-control" placeholder="مثال: رحلة الأبواء 2021 / حفل التخرج" required>
+          </div>
+
+          <div class="form-group">
+            <label>ملاحظات الذكرى / القصة الخاصة بها</label>
+            <textarea id="photoNotes" class="form-control" placeholder="اكتب مشاعرك أو الكلمات التي تود تذكرها مع هذه الصور..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addPhotoModal')">إلغاء</button>
+          <button type="submit" id="btnSubmitPhoto" class="btn btn-primary">إضافة الذكرى</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. PIN Lock Modal -->
+  <div id="pinModal" class="modal-overlay">
+    <div class="modal" style="max-width: 380px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-lock"></i> إدخال الرقم السري</h3>
+        <button class="modal-close" onclick="closeModal('pinModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="pinForm" onsubmit="handleVerifyPin(event)">
+        <div class="modal-body text-center">
+          <p style="margin-bottom: 14px; font-size: 0.88rem;">
+            أدخل الرقم السري لتفعيل وضع التعديل وإدارة ألبوم <b id="pinAlbumName"></b>:
+          </p>
+          <div class="form-group">
+            <input type="password" id="inputPinCode" class="form-control" placeholder="الرقم السري" required style="text-align: center; font-size: 1.3rem; letter-spacing: 4px;" autofocus>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('pinModal')">إلغاء</button>
+          <button type="submit" id="btnSubmitPin" class="btn btn-primary">تحقق والتعديل</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Admin Password Modal -->
+  <div id="adminModal" class="modal-overlay">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-shield"></i> تسجيل دخول الأدمن</h3>
+        <button class="modal-close" onclick="closeModal('adminModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="adminForm" onsubmit="handleAdminLogin(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>كلمة سر الأدمن السرية <span class="req">*</span></label>
+            <input type="password" id="adminPasswordInput" class="form-control" placeholder="أدخل كلمة مرور الأدمن" required style="text-align: center; font-size: 1.2rem;">
+            <div class="form-hint">يتم التحقق من كلمة السر عبر السيرفر لإتاحة الصلاحيات الكاملة لكل الألبومات والذكريات.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('adminModal')">إلغاء</button>
+          <button type="submit" id="btnSubmitAdmin" class="btn btn-primary">تسجيل الدخول</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Lightbox Modal (Multi-Photo Gallery with Swipe & Arrows) -->
+  <div id="lightboxModal" class="modal-overlay lightbox-modal">
+    <div class="modal">
+      <div class="lightbox-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span id="lightboxOccasion" class="photo-occasion">---</span>
+          <button class="modal-close" onclick="closeModal('lightboxModal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <!-- Interactive Viewport for Swipe and Arrows -->
+        <div id="lightboxViewport" class="lightbox-viewport">
+          <button id="btnLightboxPrev" class="lightbox-nav-btn prev" onclick="navigateLightbox(-1)"><i class="fa-solid fa-chevron-right"></i></button>
+          <img id="lightboxImg" class="lightbox-img" src="" alt="صورة الذكرى المكبرة">
+          <button id="btnLightboxNext" class="lightbox-nav-btn next" onclick="navigateLightbox(1)"><i class="fa-solid fa-chevron-left"></i></button>
+        </div>
+
+        <!-- Gallery Indicator Dots -->
+        <div id="lightboxDots" class="lightbox-dots"></div>
+
+        <!-- Fixed Memory Details Below -->
+        <div style="margin-top: 14px;">
+          <p id="lightboxNotes" class="photo-notes" style="font-size: 0.95rem;"></p>
+          <div id="lightboxDate" style="font-size: 0.78rem; opacity: 0.8; margin-top: 6px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Audio Element -->
+  <audio id="bgAudioPlayer" preload="auto"></audio>
+
+  <!-- JavaScript Scripts -->
+  <script src="config.js"></script>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
